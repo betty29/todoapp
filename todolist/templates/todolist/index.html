@@ -1,53 +1,78 @@
+{% load static %}
 <!DOCTYPE html>
-<html >
-<head>
-  <meta charset="UTF-8">
-  <title>TodoApp - Create A Todo With Django</title>
-  {% load static %}
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-</head><body>
-<div django-app="TaskManager">        
-    <div class="container">
-            <div class="content">
-            <h1>TodoApp</h1>
-            <p class="tagline">a Django todo app</p>
-            <form action="" method="post">
-            {% csrf_token %} <!-- csrf token for basic security -->
-                <div class="inputContainer">
-                    <input type="text" id="description" class="taskName" placeholder="What do you need to do?" name="description" required>
-                    <label for="description">Description</label>
-                </div>
-                <div class="inputContainer half last">
-                    <i class="fa fa-caret-down selectArrow"></i>
-                    <select id="category" class="taskCategory" name="category_select">
-                    <option class="disabled" value="">Choose a category</option>
-                    {% for category in categories %}
-                        <option class="" value="{{ category.name }}" name="{{ category.name }}">{{ category.name }}</option>
-                    {% endfor %}
-                    </select>
-                    <label for="category">Category</label>
-                </div>
-                <div class="inputContainer half last right">
-                    <input type="date" id="dueDate" class="taskDate" name="date">
-                    <label for="dueDate">Due Date</label>
-                </div>
-                <div class="row">
-                    <button class="taskAdd" name="taskAdd" type="submit"><i class="fa fa-plus icon"></i>Add task</button>
-                    <button class="taskDelete" name="taskDelete" formnovalidate="" type="submit" onclick="$('input#sublist').click();"><i class="fa fa-trash-o icon"></i>Delete Tasks</button>
-                </div>            <ul class="taskList">
-            {% for todo in todos %} <!-- django template lang - for loop -->
-                <li class="taskItem">
-                    <input type="checkbox" class="taskCheckbox" name="checkedbox" id="{{ todo.id }}" value="{{ todo.id }}">
-                    <label for="{{ todo.id }}"><span class="complete-">{{ todo.title }}</span></label>
-                    <span class="category-{{ todo.category }}">{{ todo.category }}</span>
-                    <strong class="taskDate"><i class="fa fa-calendar"></i>{{ todo.created }} - {{ todo.due_date }}</strong>
-                </li>
-            {% endfor %}            </ul><!-- taskList -->
-            </form>
-            </div><!-- content --> </div><!-- container -->
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-</body>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>TodoList App</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="{% static 'todolist/bs/css/flatly.min.css' %}" />
+		<link rel="stylesheet" href="{% static 'todolist/styles.css' %}" />		
+	</head>
+	<body>
+
+		<div class="container-fluid" id="wrapper">
+			
+			<div class="row">
+				<div class="col-lg-4 col-lg-offset-4" id="content">
+					<h1>What to do today </h1>
+					
+					<form action="{% url 'add' %}" method="POST" role="form">
+						{% csrf_token %}					
+						<div class="form-group">
+							<div class="input-group">
+								{{ form.text}}							  
+							  <span class="input-group-btn">
+								  <button type="submit" class="btn btn-default" id="add-btn">ADD</button>
+							  </span>
+							</div>
+						</div>
+					</form>
+
+					<div class="row t10">
+						<div class="col-lg-12">
+							<div class="btn-toolbar">
+								<div class="btn-group">
+									<a href="{% url 'deletecompleted'%}">
+									<button type="button" class="btn btn-warning">
+										<i class="glyphicon glyphicon-trash"></i> DELETE COMPLETED
+									</button></a>
+								</div>
+								<div class="btn-group">
+										<a href="{% url 'deleteall' %}">
+									<button type="button" class="btn btn-danger">
+										<i class="glyphicon glyphicon-trash"></i> DELETE ALL
+									</button></a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<ul class="list-group t20">
+						{% for todolist in todo_items %}
+							{% if todolist.completed %}
+							<li class="list-group-item todo-completed">{{todolist.text}}</li>
+							{% else %}
+							<a href="{% url 'completed' todolist.id %}"><li class="list-group-item ">{{todolist.text}}</li></a>
+							{% endif %}
+						    {% endfor %}
+						
+					</ul>
+				</div>
+			</div>
+			<footer>
+				<div class="row pad">
+					<div class="col-lg-12 text-center">
+						Copyright &copy; Bluelime Learning 2018 
+					</div>
+				</div>
+			</footer>
+		</div>
+
+	
+	</body>
 </html>
